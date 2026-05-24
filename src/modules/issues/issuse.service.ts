@@ -139,6 +139,72 @@ const getSingleIssueService = async (id: string) => {
   return formattedIssue;
 };
 
+const updateIssueService = async (
+  id: string,
+  payload: { title?: string; description?: string; type?: string },
+  currentUser: any,
+) => {
+  const { title, description, type } = payload;
+
+  const issueQuery = await pool.query(`SELECT * FROM issues WHERE id = $1`, [
+    id,
+  ]);
+  const issue = issueQuery.rows[0];
+
+  if (!issue) {
+    throw new Error("Requested resource does not exist");
+  }
+
+  if (currentUser.role === "contributor") {
+    if (issue.reporter_id !== currentUser.id) {
+      throw new Error(
+        "You do not have permission to update this issue. Contributors can only update their own issues.",
+      );
+    }
+
+    if (issue.status !== "open") {
+      throw new Error(
+        "Contributors can only edit issues when the status is 'open'",
+      );
+    }
+  }
+
+  const result = await pool.query(
+    `
+    UPDATE issues 
+    SET 
+      title = COALESCE($1, title), 
+      description = COALESCE($2, description), 
+      type = COALESCE($3, type), 
+      updated_at = NOW() 
+      WHERE id = $4
+      RETURNING id, title, description, type, status, reporter_id, created_at, updated_at
+  `,
+    [title, description, type, id],
+  );
+  return result.rows[0];
+};
+
+const deleteIssueService = async (id: string) => {
+  const issueResult = await pool.query(`SELECT * FROM issues WHERE id = $1`, [
+    id,
+  ]);
+
+  if (issueResult.rowCount === 0) {
+    throw new Error("Issue not found");
+  }
+  const deleteIssue = await pool.query(`DELETE FROM issues WHERE id = $1`, [
+    id,
+  ]);
+
+  if (deleteIssue.rowCount && deleteIssue.rowCount > 0) {
+    return {
+      success: true,
+      message: "Issue deleted successfully",
+      deletedIssue: issueResult.rows[0],
+    };
+  }
+};
 
 export const issuesService = {
   createIssuesService,

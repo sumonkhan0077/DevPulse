@@ -6,15 +6,16 @@ import { pool } from "../db";
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.headers.authorization;
+    const authHeader  = req.headers.authorization;
 
-    if (!token) {
+    if (!authHeader) {
       return sendResponse(res, {
         statusCode: 401,
         success: false,
         message: "jwt missing!",
       });
     }
+    const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(
       token as string,
