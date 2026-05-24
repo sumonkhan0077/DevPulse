@@ -63,6 +63,41 @@ const getAllIssues = async (req: Request, res: Response) => {
   }
 };
 
+const getSingleIssue = async (req: Request, res: Response) => {
+  try {
+    const result = await issuesService.getSingleIssueService(
+      req.params.id as string,
+    );
+
+    if (!result) {
+      return sendResponse(res, {
+        statusCode: 404,
+        success: false,
+        message: "Issue not found",
+        data: null,
+      });
+    }
+
+    return sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Issue fetched successfully",
+      data: result,
+    });
+
+  } catch (error: any) {
+    console.log("GET SINGLE ISSUE ERROR:", error);
+
+    return sendResponse(res, {
+      statusCode: 500,
+      success: false,
+      message: error.message || "Internal Server Error",
+      data: null,
+    });
+  }
+};
+
+
 
 
 export const issuesController = {
