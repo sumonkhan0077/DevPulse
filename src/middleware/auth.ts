@@ -16,7 +16,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
     const token = authHeader.split(" ")[1];
-
+//   console.log(token , "ati hoto", authHeader)
     const decoded = jwt.verify(
       token as string,
       config.jwt_secret as string,
@@ -37,7 +37,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     req.user = user;
-    console.log("from middleware", req?.user);
+    // console.log("from middleware", req?.user);
     next();
   } catch (error) {
     return sendResponse(res, {
