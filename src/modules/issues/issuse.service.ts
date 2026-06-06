@@ -1,5 +1,5 @@
+import type { Request } from "express";
 import { pool } from "../../db";
-
 
 interface IssuesQuery {
   sort?: "newest" | "oldest";
@@ -100,7 +100,6 @@ const getAllIssuesService = async (query: IssuesQuery) => {
 
   return finalResult;
 };
-
 
 const getSingleIssueService = async (id: string) => {
   const issueResult = await pool.query(`SELECT * FROM issues WHERE id = $1`, [

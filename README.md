@@ -4,7 +4,7 @@ A collaborative platform for software teams to report bugs, suggest features, an
 
 ## 🚀 Live Deployment
 
-- **Live API URL**: `https://your-deployment-url.vercel.app`
+- **Live API URL**: `https://dev-pulse-orcin-three.vercel.app/`
 - **GitHub Repository**: `https://github.com/sumonkhan0077/DevPulse`
 
 ## ✨ Features
